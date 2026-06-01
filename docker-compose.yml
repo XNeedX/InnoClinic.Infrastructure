@@ -11,3 +11,12 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     restart: unless-stopped
+  
+  innoclinic-blob-storage:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    container_name: innoclinic.blob-storage
+    volumes: 
+      - ./.containers/blob_storage/data:/data
+    ports:
+      - "10000:10000"
+    command: "azurite-blob --blobHost 0.0.0.0 -l /data"
