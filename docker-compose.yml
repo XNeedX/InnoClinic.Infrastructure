@@ -20,3 +20,16 @@ services:
     ports:
       - "10000:10000"
     command: "azurite-blob --blobHost 0.0.0.0 -l /data"
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.5.7
+    environment:
+      - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+      - KC_HEALTH_ENABLED=true
+    volumes:
+      - ./containers/identity:/opt/keycloak/data
+    ports:
+      - "8080:8080"
+      - "9000:9000"
+    command: start-dev
+    user: root 
