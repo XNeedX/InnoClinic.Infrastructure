@@ -47,3 +47,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - "8025:8025" 
+      - "1025:1025" 
