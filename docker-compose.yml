@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   rabbitmq:
-    image: rabbitmq:3-management-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile.rabbitmq
     container_name: innoclinic_rabbitmq
     ports:
       - "5672:5672"   
@@ -46,7 +48,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
+
   mailpit:
     image: axllent/mailpit
     ports:
