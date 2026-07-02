@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   rabbitmq:
     build:
@@ -43,21 +45,6 @@ services:
     ports:
      - "7160:8081" 
      - "5137:8080"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-
-  profiles-api:
-    container_name: innoclinic.profiles-api
-    build:
-      context: E:\InnoClinic.ProfilesAPI
-      dockerfile: Dockerfile
-      args:
-      - GITHUB_USERNAME=${GITHUB_USERNAME}
-      - GITHUB_PASSWORD=${GITHUB_PASSWORD}
-    ports:
-     - "7262:8081" 
-     - "5154:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
