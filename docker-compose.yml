@@ -10,6 +10,9 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+      RabbitMQ__Host: ${RABBITMQ_HOST}
+      RabbitMQ__Username: ${RABBITMQ_USERNAME}
+      RabbitMQ__Password: ${RABBITMQ_PASSWORD}
     restart: unless-stopped
   
   innoclinic-blob-storage:
@@ -61,8 +64,34 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
+      - Authentication__MetadataAddress=http://keycloak:8080/realms/InnoClinic/.well-known/openid-configuration
+      - ConnectionStrings__DefaultConnection=${PROFILES_DB_CONNECTION_STRING}
+      - RabbitMQ__Host=${RABBITMQ_HOST}
+      - RabbitMQ__Username=${RABBITMQ_USERNAME}
+      - RabbitMQ__Password=${RABBITMQ_PASSWORD}
 
-  mailpit:
+  services-api:
+    container_name: innoclinic.services-api
+    build:
+      context: E:\ServicesAPIgit
+      dockerfile: Dockerfile
+      args:
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - GITHUB_PASSWORD=${GITHUB_PASSWORD}   
+    ports:
+     - "7278:8081" 
+     - "5095:8080"
+    environment:
+      - ASPNETCORE_ENVIR ONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - Authentication__MetadataAddress=http://keycloak:8080/realms/InnoClinic/.well-known/openid-configuration
+      - ConnectionStrings__DefaultConnection=${SERVICES_DB_CONNECTION_STRING}
+      - RabbitMQ__Host=${RABBITMQ_HOST}
+      - RabbitMQ__Username=${RABBITMQ_USERNAME}
+      - RabbitMQ__Password=${RABBITMQ_PASSWORD}
+      
+      
+  mailpit: 
     image: axllent/mailpit
     ports:
       - "8025:8025" 
