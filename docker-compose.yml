@@ -52,6 +52,10 @@ services:
     depends_on:
       - services-api
       - profiles-api
+      - offices-api
+      - appointments-api 
+      - documents-api
+
 
   profiles-api:
     container_name: innoclinic.profiles-api
@@ -96,8 +100,8 @@ services:
   appointments-api:
       container_name: innoclinic.appointments-api
       build:
-        context: E:\AppointmentsAPI
-        dockerfile: AppointmentsAPI.Presentation\Dockerfile 
+        context: E:\Innowise Project\AppointmentsAPI
+        dockerfile: Dockerfile 
         args:
         - GITHUB_USERNAME=${GITHUB_USERNAME}
         - GITHUB_PASSWORD=${GITHUB_PASSWORD}
@@ -112,10 +116,49 @@ services:
         - RabbitMQ__Host=${RABBITMQ_HOST}
         - RabbitMQ__Username=${RABBITMQ_USERNAME}
         - RabbitMQ__Password=${RABBITMQ_PASSWORD}
-      depends_on:
-        - rabbitmq
-        - keycloak 
 
+  offices-api:
+      container_name: innoclinic.offices-api
+      build:
+        context: E:\Innowise Project\OfficesAPI\InnoClinic.OfficesApi
+        dockerfile: Dockerfile 
+        args:
+        - GITHUB_USERNAME=${GITHUB_USERNAME}
+        - GITHUB_PASSWORD=${GITHUB_PASSWORD}
+      ports:
+       - "7169:8081" 
+       - "5193:8080"
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_HTTP_PORTS=8080
+        - Authentication__MetadataAddress=http://keycloak:8080/realms/InnoClinic/.well-known/openid-configuration
+        - OfficeDatabaseSettings__ConnectionString=${OFFICES_DB_CONNECTION_STRING}
+        - OfficeDatabaseSettings__DatabaseName=OfficesDb
+        - OfficeDatabaseSettings__OfficesCollectionName=Offices
+        - RabbitMQ__Host=${RABBITMQ_HOST}
+        - RabbitMQ__Username=${RABBITMQ_USERNAME}
+        - RabbitMQ__Password=${RABBITMQ_PASSWORD}
+
+  documents-api:
+    container_name: innoclinic.documents-api
+    build:
+      context: E:\Projects\DocumentsAPI 
+      dockerfile: Dockerfile 
+      args:
+        - GITHUB_USERNAME=${GITHUB_USERNAME}
+        - GITHUB_PASSWORD=${GITHUB_PASSWORD}
+    ports:
+      - "7266:8081" 
+      - "5105:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - Authentication__MetadataAddress=http://keycloak:8080/realms/InnoClinic/.well-known/openid-configuration
+      - ConnectionStrings__BlobStorage=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://innoclinic-blob-storage:10000/devstoreaccount1;
+      - RabbitMQ__Host=${RABBITMQ_HOST} 
+      - RabbitMQ__Username=${RABBITMQ_USERNAME}
+      - RabbitMQ__Password=${RABBITMQ_PASSWORD}
+  
   mailpit: 
     image: axllent/mailpit
     ports:
